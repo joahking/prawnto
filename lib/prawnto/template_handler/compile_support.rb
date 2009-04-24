@@ -2,8 +2,12 @@ module Prawnto
   module TemplateHandler
 
     class CompileSupport
-      extend ActiveSupport::Memoizable
-      
+      # http://railscasts.com/episodes/153-pdfs-with-prawn#comment_47778
+      # memoize is not supported in Rails < 2.2
+      unless Gem::Version.new(Rails.version) < Gem::Version.new("2.2.0")
+        extend ActiveSupport::Memoizable
+      end
+
       attr_reader :options
 
       def initialize(controller)
@@ -27,13 +31,21 @@ module Prawnto
       def ie_request?
         @controller.request.env['HTTP_USER_AGENT'] =~ /msie/i
       end
-      memoize :ie_request?
+      # http://railscasts.com/episodes/153-pdfs-with-prawn#comment_47778
+      # memoize is not supported in Rails < 2.2
+      unless Gem::Version.new(Rails.version) < Gem::Version.new("2.2.0")
+        memoize :ie_request?
+      end
 
       # added to make ie happy with ssl pdf's (per naisayer)
       def ssl_request?
         @controller.request.env['SERVER_PROTOCOL'].downcase == "https"
       end
-      memoize :ssl_request?
+      # http://railscasts.com/episodes/153-pdfs-with-prawn#comment_47778
+      # memoize is not supported in Rails < 2.2
+      unless Gem::Version.new(Rails.version) < Gem::Version.new("2.2.0")
+        memoize :ssl_request?
+      end
 
       # TODO: kept around from railspdf-- maybe not needed anymore? should check.
       def set_pragma
